@@ -1,0 +1,37 @@
+import { isFile, isPathExist } from "../utils/fileHelper.js";
+import { runTerminal } from "../utils/helper.js";
+
+export const isComandExist = async (
+  tool: string,
+  args: Array<string>,
+): Promise<boolean> => {
+  try {
+    const result = await runTerminal(tool, args);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const isVideo = async (path: string): Promise<boolean> => {
+  const isFileResult = await isFile(path);
+  if (!isFileResult) return false;
+
+  try {
+    const { stdout } = await runTerminal("ffprobe", [
+      "-v",
+      "error",
+      "-select_streams",
+      "v:0",
+      "-show_entries",
+      "stream=codec_type",
+      "-of",
+      "default=noprint_wrappers=1:nokey=1",
+      path,
+    ]);
+
+    return stdout.trim() === "video";
+  } catch (error) {
+    return false;
+  }
+};
