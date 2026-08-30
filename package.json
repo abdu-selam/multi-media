@@ -4,8 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch ./src/index.ts",
+    "build": "tsdown"
   },
   "keywords": [],
-  "type": "commonjs"
+  "type": "module",
+  "devDependencies": {
+    "tsdown": "^0.22.14",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
 }
