@@ -9,7 +9,18 @@ import type {
   FormatMetaData,
   MetaData,
 } from "../types/video.types.js";
-import { getMetaData } from "../comands/excute.js";
+import {
+  formatDataCommand,
+  metaDataCommand,
+  streamDataCommand,
+} from "../comands/excute.js";
+import {
+  audioMetaDataPreparer,
+  fileMetaDataPreparer,
+  formatMetaDataPreparer,
+  metaDataPreparer,
+  videoMetaDataPreparer,
+} from "../utils/terminalHelper.js";
 
 export class Video implements VideoInterface {
   input: string;
@@ -45,32 +56,40 @@ export class Video implements VideoInterface {
   }
 
   async videoMeta(): Promise<VideoMetaData> {
-    const data = await this.meta();
+    const data = await streamDataCommand(this.input);
 
-    return data.video;
+    const metaData = videoMetaDataPreparer(data);
+
+    return metaData;
   }
 
   async audioMeta(): Promise<AudioMetaData> {
-    const data = await this.meta();
+    const data = await streamDataCommand(this.input);
 
-    return data.audio;
+    const metaData = audioMetaDataPreparer(data);
+
+    return metaData;
   }
 
   async fileMeta(): Promise<FileMetaData> {
-    const data = await this.meta();
+    const data = await fileMetaDataPreparer(this.input);
 
-    return data.file;
+    return data;
   }
 
   async formatMeta(): Promise<FormatMetaData> {
-    const data = await this.meta();
+    const data = await formatDataCommand(this.input);
 
-    return data.format;
+    const metaData = formatMetaDataPreparer(data);
+
+    return metaData;
   }
 
   async meta(): Promise<MetaData> {
-    const data = await getMetaData(this.input);
+    const data = await metaDataCommand(this.input);
 
-    return data;
+    const metaData = await metaDataPreparer(data, this.input);
+
+    return metaData;
   }
 }

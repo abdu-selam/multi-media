@@ -1,5 +1,5 @@
 import { isFile, isPathExist } from "../utils/fileHelper.js";
-import { runTerminal } from "../utils/helper.js";
+import { runTerminal } from "../utils/terminalHelper.js";
 
 export const isComandExist = async (
   tool: string,
