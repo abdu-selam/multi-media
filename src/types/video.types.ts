@@ -1,6 +1,5 @@
 export interface VideoInterface {
   input: string;
-  output: string;
 
   videoMeta: () => Promise<VideoMetaData>;
   audioMeta: () => Promise<AudioMetaData>;
@@ -14,11 +13,6 @@ export interface VideoInterface {
   copy: (to: string) => Promise<void>;
   delete: () => Promise<void>;
 }
-
-export type VideoConstructorOptions = {
-  force?: boolean;
-  log?: boolean;
-};
 
 export interface FileMetaData {
   filename: string;
@@ -58,13 +52,10 @@ export interface AudioMetaData {
   duration: number;
 }
 
-export interface MetaDataHelper {
+export interface MetaData {
   video: VideoMetaData;
   audio: AudioMetaData;
   format: FormatMetaData;
   tags: Record<string, string>;
-}
-
-export interface MetaData extends MetaDataHelper {
   file: FileMetaData;
 }

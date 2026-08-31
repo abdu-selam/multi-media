@@ -1,4 +1,4 @@
-import { isFile, isPathExist } from "../utils/fileHelper.js";
+import { isFile } from "../utils/fileHelper.js";
 import { runTerminal } from "../utils/terminalHelper.js";
 
 export const isComandExist = async (
@@ -6,7 +6,7 @@ export const isComandExist = async (
   args: Array<string>,
 ): Promise<boolean> => {
   try {
-    const result = await runTerminal(tool, args);
+    await runTerminal(tool, args);
     return true;
   } catch (error) {
     return false;

@@ -5,7 +5,6 @@ import type {
   FileMetaData,
   FormatMetaData,
   MetaData,
-  MetaDataHelper,
   VideoMetaData,
 } from "../types/video.types.js";
 import { stat } from "node:fs/promises";
@@ -110,7 +109,7 @@ export const fileMetaDataPreparer = async (
 
   return {
     filename: nodePath.basename(path),
-    path: nodePath.join(nodePath.dirname(path), nodePath.basename(path)),
+    path,
     folder: nodePath.dirname(path),
     extension: nodePath.extname(path),
     size: fileStat.size,

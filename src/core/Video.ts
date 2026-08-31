@@ -1,8 +1,6 @@
 import fs from "node:fs/promises";
-import { isPathExist } from "../utils/fileHelper.js";
 import type {
   VideoInterface,
-  VideoConstructorOptions,
   VideoMetaData,
   AudioMetaData,
   FileMetaData,
@@ -25,41 +23,16 @@ import nodePath from "node:path";
 import { isVideo } from "../comands/checking.js";
 
 export class Video implements VideoInterface {
-  input: string;
-  output: string;
-  private options: VideoConstructorOptions;
-  #path: string = "";
   #folder: string = "";
   #filename: string = "";
 
-  constructor(
-    input: string,
-    output: string,
-    options: VideoConstructorOptions = {
-      force: false,
-      log: false,
-    },
-  ) {
-    this.input = input;
-    this.output = output;
-    this.options = options;
-
-    this.createOutputDir();
-
-    this.#path = nodePath.join(
-      nodePath.dirname(this.input),
-      nodePath.basename(this.input),
-    );
-    this.#folder = nodePath.dirname(this.input);
-    this.#filename = nodePath.basename(this.input);
+  constructor(public input: string) {
+    this.#constructPrivates();
   }
 
-  private async createOutputDir() {
-    if (this.options.force) {
-      fs.mkdir(this.output, {
-        recursive: true,
-      });
-    }
+  #constructPrivates() {
+    this.#folder = nodePath.dirname(this.input);
+    this.#filename = nodePath.basename(this.input);
   }
 
   // Meta data related methods
@@ -121,11 +94,10 @@ export class Video implements VideoInterface {
 
     const newPath = nodePath.join(this.#folder, `${name}${ext}`);
 
-    await fs.rename(this.#path, newPath);
+    await fs.rename(this.input, newPath);
 
     this.input = newPath;
     this.#filename = `${name}${ext}`;
-    this.#path = newPath;
   }
 
   async move(to: string): Promise<void> {
@@ -145,10 +117,9 @@ export class Video implements VideoInterface {
 
     const newPath = nodePath.join(to, this.#filename);
 
-    await fs.rename(this.#path, newPath);
+    await fs.rename(this.input, newPath);
 
     this.input = newPath;
-    this.#path = newPath;
     this.#folder = to;
   }
 
@@ -169,7 +140,7 @@ export class Video implements VideoInterface {
 
     const newPath = nodePath.join(to, this.#filename);
 
-    await fs.copyFile(this.#path, newPath);
+    await fs.copyFile(this.input, newPath);
   }
 
   async delete(): Promise<void> {
