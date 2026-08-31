@@ -8,6 +8,11 @@ export interface VideoInterface {
   formatMeta: () => Promise<FormatMetaData>;
 
   meta: () => Promise<MetaData>;
+
+  rename: (name: string) => Promise<void>;
+  move: (to: string) => Promise<void>;
+  copy: (to: string) => Promise<void>;
+  delete: () => Promise<void>;
 }
 
 export type VideoConstructorOptions = {
@@ -18,6 +23,7 @@ export type VideoConstructorOptions = {
 export interface FileMetaData {
   filename: string;
   path: string;
+  folder: string;
   extension: string;
   size: number;
   createdAt: Date;

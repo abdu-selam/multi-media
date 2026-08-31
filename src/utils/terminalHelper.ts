@@ -111,6 +111,7 @@ export const fileMetaDataPreparer = async (
   return {
     filename: nodePath.basename(path),
     path: nodePath.join(nodePath.dirname(path), nodePath.basename(path)),
+    folder: nodePath.dirname(path),
     extension: nodePath.extname(path),
     size: fileStat.size,
     createdAt: new Date(fileStat.birthtime),
