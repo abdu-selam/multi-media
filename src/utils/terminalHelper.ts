@@ -5,6 +5,7 @@ import type {
   FileMetaData,
   FormatMetaData,
   MetaData,
+  onProgres,
   VideoMetaData,
 } from "../types/video.types.js";
 import { stat } from "node:fs/promises";
@@ -26,6 +27,8 @@ export const colors: Record<string, string> = {
 export const runConvertor = (
   args: Array<string>,
   duration: number,
+  logs: boolean = false,
+  onProgres?: onProgres,
 ): Promise<void> => {
   return new Promise((resolve, reject) => {
     const ffmpeg = spawn("ffmpeg", args);
@@ -48,9 +51,14 @@ export const runConvertor = (
         speed: final.speed?.trim(),
         size: Number(final.total_size),
         status: final.progress,
+        duration,
       };
 
       const progress = (progressData.time / duration) * 100;
+
+      if (typeof onProgres === "function") {
+        onProgres({ ...progressData, progress: progress / 100 });
+      }
 
       let terminalOutput =
         `${colors.green}${progress >= 100 ? 100.0 : progress.toFixed(2)}%${colors.reset}    ` +
@@ -65,6 +73,7 @@ export const runConvertor = (
         terminalOutput = terminalOutput.slice(0, terminalWidth - 1);
       }
 
+      if (!logs) return;
       process.stdout.write(`\x1b[2K\r${terminalOutput}`);
 
       if (final.process === "end") {
@@ -124,8 +133,8 @@ export const formatMetaDataPreparer = (
   return {
     name: format.format_name,
     longName: format.format_long_name,
-    duration: format.duration,
-    bitrate: format.bit_rate,
+    duration: Number(format.duration),
+    bitrate: Number(format.bit_rate),
   };
 };
 
@@ -139,12 +148,12 @@ export const videoMetaDataPreparer = (
   return {
     codecName: video.codec_name,
     codecLongName: video.codec_long_name,
-    width: video.width,
-    height: video.height,
+    width: Number(video.width),
+    height: Number(video.height),
     frameRate: video.avg_frame_rate,
-    bitrate: video.bit_rate,
+    bitrate: Number(video.bit_rate),
     aspectRatio: video.display_aspect_ratio,
-    duration: video.duration,
+    duration: Number(video.duration),
   };
 };
 
@@ -167,10 +176,10 @@ export const audioMetaDataPreparer = (
   if (!!audio) {
     audioMeta.codecName = audio.codec_name;
     audioMeta.codecLongName = audio.codec_long_name;
-    audioMeta.sampleRate = audio.sample_rate;
-    audioMeta.channels = audio.channels;
-    audioMeta.bitrate = audio.duration;
-    audioMeta.duration = audio.bit_rate;
+    audioMeta.sampleRate = Number(audio.sample_rate);
+    audioMeta.channels = Number(audio.channels);
+    audioMeta.bitrate = Number(audio.duration);
+    audioMeta.duration = Number(audio.bit_rate);
   }
 
   return {

@@ -13,8 +13,17 @@ export interface VideoInterface {
   copy: (to: string) => Promise<void>;
   delete: () => Promise<void>;
 
-  toMime: (type: VideoMimeTypes, to: string) => Promise<void>;
+  toMime: (
+    type: VideoMimeTypes,
+    to: string,
+    logs?: boolean,
+    onProgres?: onProgres,
+  ) => Promise<void>;
 }
+
+export type onProgres = (
+  progressData: Record<string, string | number | undefined>,
+) => void;
 
 export interface FileMetaData {
   filename: string;
@@ -39,7 +48,7 @@ export interface VideoMetaData {
   codecLongName: string;
   width: number;
   height: number;
-  frameRate: number;
+  frameRate: string;
   bitrate: number;
   aspectRatio: string;
   duration: number;

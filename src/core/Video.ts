@@ -7,6 +7,7 @@ import type {
   FormatMetaData,
   MetaData,
   VideoMimeTypes,
+  onProgres,
 } from "../types/video.types.js";
 import {
   converssionCommand,
@@ -214,7 +215,12 @@ export class Video implements VideoInterface {
   }
 
   // mime changers
-  async toMime(type: VideoMimeTypes, to: string): Promise<void> {
+  async toMime(
+    type: VideoMimeTypes,
+    to: string,
+    logs: boolean = true,
+    onProgres: onProgres = () => {},
+  ): Promise<void> {
     // check to
     if (typeof to !== "string") {
       throw new Error("Error");
@@ -230,6 +236,8 @@ export class Video implements VideoInterface {
       videoData.duration,
       fileData.size,
       fileData.extension,
+      logs,
+      onProgres,
     );
   }
 }

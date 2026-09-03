@@ -1,5 +1,5 @@
 import { convertArgs } from "../data/mimeTypes.js";
-import type { VideoMimeTypes } from "../types/video.types.js";
+import type { onProgres, VideoMimeTypes } from "../types/video.types.js";
 import { formatedSize, formatedTime } from "../utils/helper.js";
 import { colors, runConvertor, runTerminal } from "../utils/terminalHelper.js";
 import { isComandExist, isVideo } from "./checking.js";
@@ -103,6 +103,8 @@ export const converssionCommand = async (
   duration: number,
   size: number,
   input_mime: string,
+  logs: boolean = false,
+  onProgres?: onProgres,
 ): Promise<void> => {
   const isVideoResult = await isVideo(input);
 
@@ -129,5 +131,5 @@ export const converssionCommand = async (
 
   process.stdout.write(startingLog);
 
-  await runConvertor(args, duration);
+  await runConvertor(args, duration, logs, onProgres);
 };
