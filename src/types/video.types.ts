@@ -12,6 +12,8 @@ export interface VideoInterface {
   move: (to: string) => Promise<void>;
   copy: (to: string) => Promise<void>;
   delete: () => Promise<void>;
+
+  toMime: (type: VideoMimeTypes, to: string) => Promise<void>;
 }
 
 export interface FileMetaData {
@@ -59,3 +61,23 @@ export interface MetaData {
   tags: Record<string, string>;
   file: FileMetaData;
 }
+
+export type VideoFormatConfig = {
+  extension: string;
+  mimeType: string;
+  ffmpegFormat: string;
+  videoCodec: string;
+  audioCodec: string;
+};
+
+export type VideoMimeTypes =
+  | "mp4"
+  | "mkv"
+  | "webm"
+  | "avi"
+  | "mov"
+  | "mpeg"
+  | "ogv"
+  | "flv"
+  | "m4v"
+  | "3gp";

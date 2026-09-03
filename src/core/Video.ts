@@ -6,8 +6,10 @@ import type {
   FileMetaData,
   FormatMetaData,
   MetaData,
+  VideoMimeTypes,
 } from "../types/video.types.js";
 import {
+  converssionCommand,
   formatDataCommand,
   metaDataCommand,
   streamDataCommand,
@@ -209,5 +211,25 @@ export class Video implements VideoInterface {
     }
 
     await fs.unlink(path);
+  }
+
+  // mime changers
+  async toMime(type: VideoMimeTypes, to: string): Promise<void> {
+    // check to
+    if (typeof to !== "string") {
+      throw new Error("Error");
+    }
+
+    const videoData = await this.videoMeta();
+    const fileData = await this.fileMeta();
+
+    await converssionCommand(
+      this.input,
+      to,
+      type,
+      videoData.duration,
+      fileData.size,
+      fileData.extension,
+    );
   }
 }

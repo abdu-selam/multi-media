@@ -1,4 +1,4 @@
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { promisify } from "node:util";
 import type {
   AudioMetaData,
@@ -10,8 +10,89 @@ import type {
 import { stat } from "node:fs/promises";
 import nodePath from "node:path";
 import { isVideo } from "../comands/checking.js";
+import { formatedSize, formatedTime } from "./helper.js";
 
 export const runTerminal = promisify(execFile);
+
+export const colors: Record<string, string> = {
+  reset: "\x1b[0m",
+  green: "\x1b[32m",
+  cyan: "\x1b[36m",
+  yellow: "\x1b[33m",
+  gray: "\x1b[90m",
+  red: "\x1b[31m",
+};
+
+export const runConvertor = (
+  args: Array<string>,
+  duration: number,
+): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    const ffmpeg = spawn("ffmpeg", args);
+
+    ffmpeg.stdout.on("data", (data) => {
+      const output = data.toString();
+
+      const lines = output.split(/\r?\n/);
+      const final: Record<string, string> = {};
+
+      for (const line of lines) {
+        if (!line.includes("=")) continue;
+        const [key, value] = line.replace(/=\s+/g, "=").split("=");
+
+        final[key] = value;
+      }
+
+      const progressData = {
+        time: Number(final.out_time_us) / 1_000_000,
+        speed: final.speed?.trim(),
+        size: Number(final.total_size),
+        status: final.progress,
+      };
+
+      const progress = (progressData.time / duration) * 100;
+
+      let terminalOutput =
+        `${colors.green}${progress >= 100 ? 100.0 : progress.toFixed(2)}%${colors.reset}    ` +
+        `${colors.gray}${formatedSize(progressData.size)}    ` +
+        `${colors.gray}${formatedTime(progressData.time)} / ` +
+        `${colors.red}${formatedTime(duration)}    ` +
+        `speed=${progressData.speed}${colors.reset}`;
+
+      const terminalWidth = process.stdout.columns || 80;
+
+      if (terminalOutput.length >= terminalWidth) {
+        terminalOutput = terminalOutput.slice(0, terminalWidth - 1);
+      }
+
+      process.stdout.write(`\x1b[2K\r${terminalOutput}`);
+
+      if (final.process === "end") {
+        process.stdout.write("\n");
+      }
+    });
+
+    ffmpeg.stderr.on("data", (data) => {});
+
+    ffmpeg.on("close", (code) => {
+      if (code === 0) {
+        const postProcess =
+          `\n${colors.green}Conversion finished succefully\n\n` +
+          `${colors.gray}path:${colors.reset}\n` +
+          `    - ${args[args.length - 1]}`;
+
+        process.stdout.write(postProcess);
+        resolve();
+      } else {
+        reject(new Error(`FFmpeg exited with code ${code}`));
+      }
+    });
+
+    ffmpeg.on("error", (error) => {
+      reject(error);
+    });
+  });
+};
 
 export const metaDataPreparer = async (
   data: Record<string, any>,

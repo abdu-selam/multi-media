@@ -17,6 +17,12 @@ export const isVideo = async (path: string): Promise<boolean> => {
   const isFileResult = await isFile(path);
   if (!isFileResult) return false;
 
+  const isFbroneExist = await isComandExist("ffprobe", ["-version"]);
+  
+  if (!isFbroneExist) {
+    throw new Error("Not Video");
+  }
+
   try {
     const { stdout } = await runTerminal("ffprobe", [
       "-v",
