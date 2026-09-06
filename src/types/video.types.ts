@@ -42,6 +42,13 @@ export interface VideoInterface {
     onProgres?: onProgres,
   ) => Promise<void>;
 
+   trimEnd: (
+    second: number,
+    destination: string,
+    logs?: boolean,
+    onProgres?: onProgres,
+  ) => Promise<void>;
+
   // trim start
   // trim end
   // cut

@@ -338,4 +338,38 @@ export class Video implements VideoInterface {
       onProgres,
     );
   }
+
+  async trimEnd(
+    second: number,
+    destination: string,
+    logs: boolean = true,
+    onProgres: onProgres = () => {},
+  ): Promise<void> {
+    if (!isNumber(second)) {
+      throw new Error("not number");
+    }
+
+    const start = 0;
+    let end = Number(second);
+
+    const videoData = await this.videoMeta();
+    const fileData = await this.fileMeta();
+
+    end = videoData.duration > end ? end : videoData.duration;
+
+    if (end === 0) {
+      throw new Error("Limit");
+    }
+
+    await trimCommand(
+      this.input,
+      destination,
+      videoData.duration,
+      fileData.size,
+      start,
+      end,
+      logs,
+      onProgres,
+    );
+  }
 }
