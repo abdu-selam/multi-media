@@ -27,7 +27,17 @@ export interface VideoInterface {
     onProgres?: onProgres,
   ) => Promise<void>;
 
-  // toAudio
+  trim: (
+    startSecond: number,
+    endSecond: number,
+    destination: string,
+    logs?: boolean,
+    onProgres?: onProgres,
+  ) => Promise<void>;
+
+  // trim
+  // trim start
+  // trim end
   // cut
   // crop
   // extract frame
@@ -105,13 +115,7 @@ export type VideoMimeTypes =
   | "m4v"
   | "3gp";
 
-export type AudioMimeTypes =
-  | "mp3"
-  | "m4a"
-  | "wav"
-  | "flac"
-  | "ogg"
-  | "aiff";
+export type AudioMimeTypes = "mp3" | "m4a" | "wav" | "flac" | "ogg" | "aiff";
 
 export type AudioFormatConfig = {
   extension: AudioMimeTypes;

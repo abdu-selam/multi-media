@@ -16,6 +16,7 @@ import {
   metaDataCommand,
   streamDataCommand,
   toAudioCommand,
+  trimCommand,
 } from "../comands/excute.js";
 import {
   audioMetaDataPreparer,
@@ -26,6 +27,7 @@ import {
 } from "../utils/terminalHelper.js";
 import nodePath from "node:path";
 import { isVideo } from "../comands/checking.js";
+import { isNumber } from "../utils/validators.js";
 
 export class Video implements VideoInterface {
   #folder: string = "";
@@ -264,6 +266,41 @@ export class Video implements VideoInterface {
       videoData.duration,
       fileData.size,
       fileData.extension,
+      logs,
+      onProgres,
+    );
+  }
+
+  // trimming the video
+  async trim(
+    startSecond: number,
+    endSecond: number,
+    destination: string,
+    logs: boolean = true,
+    onProgres: onProgres = () => {},
+  ): Promise<void> {
+    // check the start and destination
+    if (!isNumber(startSecond) || !isNumber(endSecond)) {
+      throw new Error("not number");
+    }
+
+    const start = Number(startSecond);
+    const end = Number(endSecond);
+
+    if (end - start <= 0) {
+      throw new Error("Limit");
+    }
+
+    const videoData = await this.videoMeta();
+    const fileData = await this.fileMeta();
+
+    await trimCommand(
+      this.input,
+      destination,
+      videoData.duration,
+      fileData.size,
+      start,
+      end,
       logs,
       onProgres,
     );

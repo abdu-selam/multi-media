@@ -219,9 +219,33 @@ export const audioConvertArgs = (
     `audio-${Date.now()}.${config.extension}`,
   );
 
-  terminalArgs.push("-progress")
-  terminalArgs.push("pipe:1")
-  terminalArgs.push("-nostats")
+  terminalArgs.push("-progress");
+  terminalArgs.push("pipe:1");
+  terminalArgs.push("-nostats");
+
+  terminalArgs.push(outputPath);
+
+  return terminalArgs;
+};
+
+export const trimVideoArgs = (
+  input: string,
+  output: string,
+  start: number,
+  end: number,
+): Array<string> => {
+  const ext = path.parse(input).ext
+
+  const terminalArgs: Array<string> = ["-i", input, "-ss", `${start}`, "-t", `${end - start}`, "-c", "copy" ];
+
+  const outputPath = path.join(
+    output,
+    `video-${Date.now()}${ext}`,
+  );
+
+  terminalArgs.push("-progress");
+  terminalArgs.push("pipe:1");
+  terminalArgs.push("-nostats");
 
   terminalArgs.push(outputPath);
 

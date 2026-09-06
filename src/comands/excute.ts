@@ -1,4 +1,4 @@
-import { audioConvertArgs, videoConvertArgs } from "../data/mimeTypes.js";
+import { audioConvertArgs, trimVideoArgs, videoConvertArgs } from "../data/mimeTypes.js";
 import type {
   AudioMimeTypes,
   onProgres,
@@ -168,6 +168,45 @@ export const toAudioCommand = async (
   const startingLog =
     `${colors.green}multi-media proccessing video to audio\n\n` +
     `${colors.gray}changing video from ${colors.red}${input_mime} to ${colors.red}.${mime}\n\n` +
+    `${colors.reset}original video duration ${formatedTime(duration)}\n` +
+    `original video size ${formatedSize(size)}\n\n`;
+
+  process.stdout.write(startingLog);
+
+  await runConvertor(args, duration, logs, onProgres);
+};
+
+
+export const trimCommand = async (
+  input: string,
+  output: string,
+  duration: number,
+  size: number,
+  start: number,
+  end: number,
+  logs: boolean = false,
+  onProgres?: onProgres,
+): Promise<void> => {
+  const isVideoResult = await isVideo(input);
+
+  if (!isVideoResult) {
+    throw new Error("Not Video");
+  }
+
+  const args: Array<string> = trimVideoArgs(input, output, start, end);
+
+  const isFfmpegeExist = await isComandExist("ffmpeg", ["-version"]);
+  if (!isFfmpegeExist) {
+    throw new Error("Not Video");
+  }
+
+  await fs.mkdir(output, {
+    recursive: true,
+  });
+
+  const startingLog =
+    `${colors.green}multi-media proccessing video to audio\n\n` +
+    `${colors.gray}Trimming video from ${colors.red}${formatedTime(start)} to ${colors.red}${formatedTime(end)}\n\n` +
     `${colors.reset}original video duration ${formatedTime(duration)}\n` +
     `original video size ${formatedSize(size)}\n\n`;
 
