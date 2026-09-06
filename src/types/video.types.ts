@@ -15,11 +15,25 @@ export interface VideoInterface {
 
   toMime: (
     type: VideoMimeTypes,
-    to: string,
+    destination: string,
     logs?: boolean,
     onProgres?: onProgres,
   ) => Promise<void>;
+
+  toAudio: (
+    type: AudioMimeTypes,
+    destination: string,
+    logs?: boolean,
+    onProgres?: onProgres,
+  ) => Promise<void>;
+
+  // toAudio
+  // cut
+  // crop
+  // extract frame
 }
+// add filters
+// compress
 
 export type onProgres = (
   progressData: Record<string, string | number | undefined>,
@@ -72,7 +86,7 @@ export interface MetaData {
 }
 
 export type VideoFormatConfig = {
-  extension: string;
+  extension: VideoMimeTypes;
   mimeType: string;
   ffmpegFormat: string;
   videoCodec: string;
@@ -90,3 +104,19 @@ export type VideoMimeTypes =
   | "flv"
   | "m4v"
   | "3gp";
+
+export type AudioMimeTypes =
+  | "mp3"
+  | "m4a"
+  | "wav"
+  | "flac"
+  | "ogg"
+  | "aiff";
+
+export type AudioFormatConfig = {
+  extension: AudioMimeTypes;
+  codec: string;
+  bitrate?: string;
+  sampleRate: number;
+  channels: number;
+};

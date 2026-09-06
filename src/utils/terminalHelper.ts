@@ -33,8 +33,10 @@ export const runConvertor = (
   return new Promise((resolve, reject) => {
     const ffmpeg = spawn("ffmpeg", args);
 
+    let err = ""
     ffmpeg.stdout.on("data", (data) => {
       const output = data.toString();
+      // err = output
 
       const lines = output.split(/\r?\n/);
       const final: Record<string, string> = {};
@@ -81,7 +83,10 @@ export const runConvertor = (
       }
     });
 
-    ffmpeg.stderr.on("data", (data) => {});
+    ffmpeg.stderr.on("data", (data) => {
+      const output = data.toString();
+      err += output
+    });
 
     ffmpeg.on("close", (code) => {
       if (code === 0) {
@@ -93,6 +98,7 @@ export const runConvertor = (
         process.stdout.write(postProcess);
         resolve();
       } else {
+        console.log(err)
         reject(new Error(`FFmpeg exited with code ${code}`));
       }
     });

@@ -8,12 +8,14 @@ import type {
   MetaData,
   VideoMimeTypes,
   onProgres,
+  AudioMimeTypes,
 } from "../types/video.types.js";
 import {
   converssionCommand,
   formatDataCommand,
   metaDataCommand,
   streamDataCommand,
+  toAudioCommand,
 } from "../comands/excute.js";
 import {
   audioMetaDataPreparer,
@@ -217,12 +219,12 @@ export class Video implements VideoInterface {
   // mime changers
   async toMime(
     type: VideoMimeTypes,
-    to: string,
+    destination: string,
     logs: boolean = true,
     onProgres: onProgres = () => {},
   ): Promise<void> {
     // check to
-    if (typeof to !== "string") {
+    if (typeof destination !== "string") {
       throw new Error("Error");
     }
 
@@ -231,7 +233,33 @@ export class Video implements VideoInterface {
 
     await converssionCommand(
       this.input,
-      to,
+      destination,
+      type,
+      videoData.duration,
+      fileData.size,
+      fileData.extension,
+      logs,
+      onProgres,
+    );
+  }
+
+  // video to audio changer
+  async toAudio(
+    type: AudioMimeTypes,
+    destination: string,
+    logs: boolean = true,
+    onProgres: onProgres = () => {},
+  ): Promise<void> {
+    if (typeof destination !== "string") {
+      throw new Error("Error");
+    }
+
+    const videoData = await this.videoMeta();
+    const fileData = await this.fileMeta();
+
+    await toAudioCommand(
+      this.input,
+      destination,
       type,
       videoData.duration,
       fileData.size,

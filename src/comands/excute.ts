@@ -1,5 +1,9 @@
-import { convertArgs } from "../data/mimeTypes.js";
-import type { onProgres, VideoMimeTypes } from "../types/video.types.js";
+import { audioConvertArgs, videoConvertArgs } from "../data/mimeTypes.js";
+import type {
+  AudioMimeTypes,
+  onProgres,
+  VideoMimeTypes,
+} from "../types/video.types.js";
 import { formatedSize, formatedTime } from "../utils/helper.js";
 import { colors, runConvertor, runTerminal } from "../utils/terminalHelper.js";
 import { isComandExist, isVideo } from "./checking.js";
@@ -112,7 +116,7 @@ export const converssionCommand = async (
     throw new Error("Not Video");
   }
 
-  const args: Array<string> = convertArgs(input, output, mime);
+  const args: Array<string> = videoConvertArgs(input, output, mime);
 
   const isFfmpegeExist = await isComandExist("ffmpeg", ["-version"]);
   if (!isFfmpegeExist) {
@@ -126,6 +130,44 @@ export const converssionCommand = async (
   const startingLog =
     `${colors.green}multi-media proccessing video\n\n` +
     `${colors.gray}changing mime from ${colors.red}${input_mime} to ${colors.red}.${mime}\n\n` +
+    `${colors.reset}original video duration ${formatedTime(duration)}\n` +
+    `original video size ${formatedSize(size)}\n\n`;
+
+  process.stdout.write(startingLog);
+
+  await runConvertor(args, duration, logs, onProgres);
+};
+
+export const toAudioCommand = async (
+  input: string,
+  output: string,
+  mime: AudioMimeTypes,
+  duration: number,
+  size: number,
+  input_mime: string,
+  logs: boolean = false,
+  onProgres?: onProgres,
+): Promise<void> => {
+  const isVideoResult = await isVideo(input);
+
+  if (!isVideoResult) {
+    throw new Error("Not Video");
+  }
+
+  const args: Array<string> = audioConvertArgs(input, output, mime);
+
+  const isFfmpegeExist = await isComandExist("ffmpeg", ["-version"]);
+  if (!isFfmpegeExist) {
+    throw new Error("Not Video");
+  }
+
+  await fs.mkdir(output, {
+    recursive: true,
+  });
+
+  const startingLog =
+    `${colors.green}multi-media proccessing video to audio\n\n` +
+    `${colors.gray}changing video from ${colors.red}${input_mime} to ${colors.red}.${mime}\n\n` +
     `${colors.reset}original video duration ${formatedTime(duration)}\n` +
     `original video size ${formatedSize(size)}\n\n`;
 

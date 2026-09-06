@@ -3,7 +3,6 @@ import { Video } from "./core/Video.js";
 
 const video = new Video(path.join(process.cwd(), "src", "video.mp4"));
 
-video.toMime(
-  "m4v",
-  path.join(process.cwd(), "src", "trial"),
-);
+const output = path.join(process.cwd(), "uploads");
+
+// video.toAudio("opus", output, true);
