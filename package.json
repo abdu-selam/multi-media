@@ -30,7 +30,19 @@
     "video-processing",
     "multi-media",
     "video processing",
-    "processor"
+    "processor",
+    "typescript",
+    "nodejs",
+    "ffmpeg",
+    "ffprobe",
+    "video-converter",
+    "video-metadata",
+    "video-trimmer",
+    "video-splitter",
+    "audio",
+    "audio-extraction",
+    "media-processing",
+    "multimedia"
   ],
   "author": "Abduselam Awel",
   "repository": {
