@@ -1,4 +1,11 @@
-import { FFprobeNotFound, InvalidVideoError } from "../errors/video.error.js";
+import {
+  FFmpegError,
+  FFmpegNotFound,
+  FFprobeNotFound,
+  InvalidPath,
+  InvalidSecond,
+  InvalidVideoError,
+} from "../errors/video.error.js";
 import type { ErrorTypes } from "../types/video.types.js";
 
 export const formatedSize = (byte: number): string => {
@@ -32,16 +39,25 @@ export const formatedTime = (time: number): string => {
   return `${(minutes / 60).toFixed(2)} hour`;
 };
 
-export const raiseError = (type: ErrorTypes): never => {
+export const raiseError = (
+  type: ErrorTypes,
+  message: string = "",
+): never | void => {
   const errorTypes = {
     notvideo: InvalidVideoError,
     ffprone: FFprobeNotFound,
-    // ffmpeg: InvalidVideoError,
-    // path: InvalidVideoError,
-    // second: InvalidVideoError,
-    // limit: InvalidVideoError,
-    // general: InvalidVideoError,
+    ffmpeg: FFmpegNotFound,
+    path: InvalidPath,
+    second: InvalidSecond,
+    limit: InvalidSecond,
+    general: FFmpegError,
   };
 
-  throw new errorTypes[type]();
+  if (Object.keys(errorTypes).includes(type)) {
+    if (type === "general") {
+      throw new errorTypes[type](message);
+    }
+
+    throw new errorTypes[type]();
+  }
 };

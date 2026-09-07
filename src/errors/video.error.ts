@@ -13,3 +13,38 @@ export class FFprobeNotFound extends Error {
     this.name = "CommandNotFound";
   }
 }
+
+export class FFmpegNotFound extends Error {
+  constructor(message: string = "ffmpeg does not exist on this system") {
+    super(message);
+    this.name = "CommandNotFound";
+  }
+}
+
+export class InvalidPath extends Error {
+  constructor(message: string = "path should be string only") {
+    super(message);
+    this.name = "InvalidPath";
+  }
+}
+
+export class InvalidSecond extends Error {
+  constructor(message: string = "seconds can represent in number") {
+    super(message);
+    this.name = "InvalidSecond";
+  }
+}
+
+export class InvalidSecondLimit extends Error {
+  constructor(message: string = "end must be greater than start second") {
+    super(message);
+    this.name = "InvalidSecond";
+  }
+}
+
+export class FFmpegError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "FFmpegError";
+  }
+}
