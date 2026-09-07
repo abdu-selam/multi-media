@@ -1,4 +1,4 @@
-import { InvalidVideoError } from "../errors/video.error.js";
+import { FFprobeNotFound, InvalidVideoError } from "../errors/video.error.js";
 import type { ErrorTypes } from "../types/video.types.js";
 
 export const formatedSize = (byte: number): string => {
@@ -35,6 +35,12 @@ export const formatedTime = (time: number): string => {
 export const raiseError = (type: ErrorTypes): never => {
   const errorTypes = {
     notvideo: InvalidVideoError,
+    ffprone: FFprobeNotFound,
+    // ffmpeg: InvalidVideoError,
+    // path: InvalidVideoError,
+    // second: InvalidVideoError,
+    // limit: InvalidVideoError,
+    // general: InvalidVideoError,
   };
 
   throw new errorTypes[type]();

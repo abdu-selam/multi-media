@@ -6,3 +6,10 @@ export class InvalidVideoError extends Error {
     this.name = "InvalidVideoError";
   }
 }
+
+export class FFprobeNotFound extends Error {
+  constructor(message: string = "ffprobe does not exist on this system") {
+    super(message);
+    this.name = "CommandNotFound";
+  }
+}
