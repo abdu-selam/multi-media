@@ -5,6 +5,7 @@ import type {
   VideoMimeTypes,
 } from "../types/video.types.js";
 import path from "node:path";
+import { isPathExist } from "../utils/fileHelper.js";
 
 export const videoFormats: Record<VideoMimeTypes, VideoFormatConfig> = {
   mp4: {
@@ -228,20 +229,34 @@ export const audioConvertArgs = (
   return terminalArgs;
 };
 
-export const trimVideoArgs = (
+export const trimVideoArgs = async (
   input: string,
   output: string,
   start: number,
   end: number,
-): Array<string> => {
-  const ext = path.parse(input).ext
+): Promise<Array<string>> => {
+  const ext = path.parse(input).ext;
 
-  const terminalArgs: Array<string> = ["-i", input, "-ss", `${start}`, "-t", `${end - start}`, "-c", "copy" ];
+  const terminalArgs: Array<string> = [
+    "-i",
+    input,
+    "-ss",
+    `${start}`,
+    "-t",
+    `${end - start}`,
+    "-c",
+    "copy",
+  ];
 
-  const outputPath = path.join(
-    output,
-    `video-${Date.now()}${ext}`,
-  );
+  const randomNum = Math.floor(Math.random() * 1000);
+  let outputPath = path.join(output, `video-${Date.now()}-${randomNum}${ext}`);
+
+  const isOutputExist = await isPathExist(outputPath);
+
+  if (isOutputExist) {
+    const randomNum = Math.floor(Math.random() * 1000);
+    outputPath = path.join(output, `video-${Date.now()}-${randomNum}${ext}`);
+  }
 
   terminalArgs.push("-progress");
   terminalArgs.push("pipe:1");

@@ -14,6 +14,7 @@ import {
   converssionCommand,
   formatDataCommand,
   metaDataCommand,
+  splitCommand,
   streamDataCommand,
   toAudioCommand,
   trimCommand,
@@ -368,6 +369,42 @@ export class Video implements VideoInterface {
       fileData.size,
       start,
       end,
+      logs,
+      onProgres,
+    );
+  }
+
+  async split(
+    second: number,
+    destination: string,
+    logs: boolean = true,
+    onProgres: onProgres = () => {},
+  ): Promise<void> {
+    if (!isNumber(second)) {
+      throw new Error("not number");
+    }
+
+    const start = Number(second);
+
+    if (start <= 0) {
+      throw new Error("not number");
+    }
+
+    const videoData = await this.videoMeta();
+    const fileData = await this.fileMeta();
+
+    const end = videoData.duration;
+
+    if (videoData.duration <= start) {
+      throw new Error("not number");
+    }
+
+    await splitCommand(
+      this.input,
+      destination,
+      videoData.duration,
+      fileData.size,
+      start,
       logs,
       onProgres,
     );

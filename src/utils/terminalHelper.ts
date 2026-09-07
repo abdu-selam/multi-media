@@ -29,11 +29,12 @@ export const runConvertor = (
   duration: number,
   logs: boolean = false,
   onProgres?: onProgres,
-): Promise<void> => {
+  finalReport: boolean = true,
+): Promise<string> => {
   return new Promise((resolve, reject) => {
     const ffmpeg = spawn("ffmpeg", args);
 
-    let err = ""
+    let err = "";
     ffmpeg.stdout.on("data", (data) => {
       const output = data.toString();
       // err = output
@@ -85,7 +86,7 @@ export const runConvertor = (
 
     ffmpeg.stderr.on("data", (data) => {
       const output = data.toString();
-      err += output
+      err += output;
     });
 
     ffmpeg.on("close", (code) => {
@@ -93,12 +94,17 @@ export const runConvertor = (
         const postProcess =
           `\n${colors.green}Conversion finished succefully\n\n` +
           `${colors.gray}path:${colors.reset}\n` +
-          `    - ${args[args.length - 1]}`;
+          `    - ${args[args.length - 1]}${colors.reset}`;
 
-        process.stdout.write(postProcess);
-        resolve();
+        if (finalReport) {
+          process.stdout.write(postProcess);
+          resolve(postProcess);
+        } else {
+          process.stdout.write("\n");
+          resolve(`${args[args.length - 1]}`);
+        }
       } else {
-        console.log(err)
+        console.log(err);
         reject(new Error(`FFmpeg exited with code ${code}`));
       }
     });

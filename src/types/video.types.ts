@@ -42,21 +42,23 @@ export interface VideoInterface {
     onProgres?: onProgres,
   ) => Promise<void>;
 
-   trimEnd: (
+  trimEnd: (
     second: number,
     destination: string,
     logs?: boolean,
     onProgres?: onProgres,
   ) => Promise<void>;
 
-  // trim start
-  // trim end
-  // cut
+  split: (
+    second: number,
+    destination: string,
+    logs?: boolean,
+    onProgres?: onProgres,
+  ) => Promise<void>;
+
   // crop
-  // extract frame
+  // split
 }
-// add filters
-// compress
 
 export type onProgres = (
   progressData: Record<string, string | number | undefined>,

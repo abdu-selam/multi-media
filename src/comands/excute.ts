@@ -1,4 +1,8 @@
-import { audioConvertArgs, trimVideoArgs, videoConvertArgs } from "../data/mimeTypes.js";
+import {
+  audioConvertArgs,
+  trimVideoArgs,
+  videoConvertArgs,
+} from "../data/mimeTypes.js";
 import type {
   AudioMimeTypes,
   onProgres,
@@ -176,7 +180,6 @@ export const toAudioCommand = async (
   await runConvertor(args, duration, logs, onProgres);
 };
 
-
 export const trimCommand = async (
   input: string,
   output: string,
@@ -193,7 +196,7 @@ export const trimCommand = async (
     throw new Error("Not Video");
   }
 
-  const args: Array<string> = trimVideoArgs(input, output, start, end);
+  const args: Array<string> = await trimVideoArgs(input, output, start, end);
 
   const isFfmpegeExist = await isComandExist("ffmpeg", ["-version"]);
   if (!isFfmpegeExist) {
@@ -213,4 +216,53 @@ export const trimCommand = async (
   process.stdout.write(startingLog);
 
   await runConvertor(args, duration, logs, onProgres);
+};
+
+export const splitCommand = async (
+  input: string,
+  output: string,
+  duration: number,
+  size: number,
+  start: number,
+  logs: boolean = false,
+  onProgres?: onProgres,
+): Promise<void> => {
+  const isVideoResult = await isVideo(input);
+
+  if (!isVideoResult) {
+    throw new Error("Not Video");
+  }
+
+  const argsStart: Array<string> = await trimVideoArgs(input, output, 0, start);
+  const argsEnd: Array<string> = await trimVideoArgs(input, output, start, duration);
+
+  const isFfmpegeExist = await isComandExist("ffmpeg", ["-version"]);
+  if (!isFfmpegeExist) {
+    throw new Error("Not Video");
+  }
+
+  await fs.mkdir(output, {
+    recursive: true,
+  });
+
+  const startingLog =
+    `${colors.green}multi-media proccessing video to audio\n\n` +
+    `${colors.gray}Splitting video at ${colors.red}${formatedTime(start)}\n\n` +
+    `${colors.reset}original video duration ${formatedTime(duration)}\n` +
+    `original video size ${formatedSize(size)}\n\n`;
+
+  process.stdout.write(startingLog);
+
+  const results = await Promise.all([
+    runConvertor(argsStart, duration, logs, onProgres, false),
+    runConvertor(argsEnd, duration, logs, onProgres, false),
+  ]);
+
+  const postProcess =
+    `\n${colors.green}Conversion finished succefully\n\n` +
+    `${colors.gray}paths:${colors.reset}\n` +
+    `    - ${results[0]}\n` +
+    `    - ${results[1]}${colors.reset}`;
+
+  process.stdout.write(postProcess);
 };
