@@ -1,14 +1,49 @@
 {
-  "name": "multi-media",
+  "name": "@abdu-selam/multi-media",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Powerfull video processing package that allow you to handle videos easily with ffmpeg.",
+  "license": "MIT",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "exports": {
+    ".": {
+      "types": {
+        "import": "./dist/index.d.mts",
+        "require": "./dist/index.d.cts"
+      },
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
   "scripts": {
     "dev": "tsx watch ./src/index.ts",
-    "build": "tsdown"
+    "build": "tsdown",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "type": "module",
+  "keywords": [
+    "video",
+    "video-processing",
+    "multi-media",
+    "video processing",
+    "processor"
+  ],
+  "author": "Abduselam Awel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abdu-selam/multi-media.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abdu-selam/multi-media/issues"
+  },
+  "homepage": "https://github.com/abdu-selam/multi-media#readme",
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
     "@types/node": "^26.4.0",
     "tsdown": "^0.22.14",

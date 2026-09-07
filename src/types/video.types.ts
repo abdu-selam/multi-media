@@ -55,9 +55,6 @@ export interface VideoInterface {
     logs?: boolean,
     onProgres?: onProgres,
   ) => Promise<void>;
-
-  // crop
-  // split
 }
 
 export type onProgres = (
