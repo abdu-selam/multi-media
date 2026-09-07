@@ -393,8 +393,6 @@ export class Video implements VideoInterface {
     const videoData = await this.videoMeta();
     const fileData = await this.fileMeta();
 
-    const end = videoData.duration;
-
     if (videoData.duration <= start) {
       throw new Error("not number");
     }

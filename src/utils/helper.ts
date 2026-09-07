@@ -1,3 +1,6 @@
+import { InvalidVideoError } from "../errors/video.error.js";
+import type { ErrorTypes } from "../types/video.types.js";
+
 export const formatedSize = (byte: number): string => {
   if (byte < 1024) {
     return `${byte.toFixed(2)} byte${byte > 1 ? "s" : ""}`;
@@ -27,4 +30,12 @@ export const formatedTime = (time: number): string => {
   }
 
   return `${(minutes / 60).toFixed(2)} hour`;
+};
+
+export const raiseError = (type: ErrorTypes): never => {
+  const errorTypes = {
+    notvideo: InvalidVideoError,
+  };
+
+  throw new errorTypes[type]();
 };

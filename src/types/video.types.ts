@@ -139,3 +139,12 @@ export type AudioFormatConfig = {
   sampleRate: number;
   channels: number;
 };
+
+export type ErrorTypes =
+  | "notvideo"
+  | "ffprone"
+  | "ffmpeg"
+  | "path"
+  | "second"
+  | "limit"
+  | "general";
