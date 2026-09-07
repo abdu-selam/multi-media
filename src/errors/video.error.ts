@@ -42,9 +42,25 @@ export class InvalidSecondLimit extends Error {
   }
 }
 
+export class InvalidSecondLimitStart extends Error {
+  constructor(
+    message: string = "second must be greater than 0 and less than the video duration",
+  ) {
+    super(message);
+    this.name = "InvalidSecond";
+  }
+}
+
 export class FFmpegError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "FFmpegError";
+  }
+}
+
+export class InvalidMime extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidMime";
   }
 }

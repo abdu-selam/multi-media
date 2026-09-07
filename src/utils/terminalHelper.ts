@@ -11,7 +11,8 @@ import type {
 import { stat } from "node:fs/promises";
 import nodePath from "node:path";
 import { isVideo } from "../comands/checking.js";
-import { formatedSize, formatedTime } from "./helper.js";
+import { formatedSize, formatedTime, raiseError } from "./helper.js";
+import { FFmpegError } from "../errors/video.error.js";
 
 export const runTerminal = promisify(execFile);
 
@@ -105,7 +106,7 @@ export const runConvertor = (
         }
       } else {
         console.log(err);
-        reject(new Error(`FFmpeg exited with code ${code}`));
+        reject(new FFmpegError(`FFmpeg exited with code ${code}`));
       }
     });
 
@@ -205,7 +206,7 @@ export const fileMetaDataPreparer = async (
   const isVideoResult = await isVideo(path);
 
   if (!isVideoResult) {
-    throw new Error("Not Video");
+    raiseError("notvideo")
   }
   const fileStat = await stat(path);
 

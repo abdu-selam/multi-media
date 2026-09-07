@@ -6,6 +6,7 @@ import type {
 } from "../types/video.types.js";
 import path from "node:path";
 import { isPathExist } from "../utils/fileHelper.js";
+import { raiseError } from "../utils/helper.js";
 
 export const videoFormats: Record<VideoMimeTypes, VideoFormatConfig> = {
   mp4: {
@@ -155,7 +156,10 @@ export const videoConvertArgs = (
   ];
 
   if (!validMimes.includes(mime)) {
-    throw new Error("Error");
+    raiseError(
+      "mime",
+      `Invalid mime type expected "mp4", "mkv", "webm", "avi", "mov", "mpeg", "ogv", "flv", "m4v", "3gp"`,
+    );
   }
 
   const config: VideoFormatConfig = videoFormats[mime];
@@ -196,7 +200,10 @@ export const audioConvertArgs = (
   ];
 
   if (!validMimes.includes(mime)) {
-    throw new Error("Error");
+    raiseError(
+      "mime",
+      `Invalid mime type expected "mp3", "m4a", "wav", "flac", "ogg", "aiff"`,
+    );
   }
 
   const commandFLags: Record<string, string> = {

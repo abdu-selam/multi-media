@@ -1,4 +1,5 @@
 import { isFile } from "../utils/fileHelper.js";
+import { raiseError } from "../utils/helper.js";
 import { runTerminal } from "../utils/terminalHelper.js";
 
 export const isComandExist = async (
@@ -18,9 +19,9 @@ export const isVideo = async (path: string): Promise<boolean> => {
   if (!isFileResult) return false;
 
   const isFbroneExist = await isComandExist("ffprobe", ["-version"]);
-  
+
   if (!isFbroneExist) {
-    throw new Error("Not Video");
+    raiseError("ffprone");
   }
 
   try {

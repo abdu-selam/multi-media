@@ -147,4 +147,5 @@ export type ErrorTypes =
   | "path"
   | "second"
   | "limit"
-  | "general";
+  | "mime"
+  | "limitSecond";

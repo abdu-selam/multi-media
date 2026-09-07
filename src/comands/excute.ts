@@ -8,7 +8,7 @@ import type {
   onProgres,
   VideoMimeTypes,
 } from "../types/video.types.js";
-import { formatedSize, formatedTime } from "../utils/helper.js";
+import { formatedSize, formatedTime, raiseError } from "../utils/helper.js";
 import { colors, runConvertor, runTerminal } from "../utils/terminalHelper.js";
 import { isComandExist, isVideo } from "./checking.js";
 import fs from "node:fs/promises";
@@ -19,12 +19,12 @@ export const metaDataCommand = async (
   const isVideoResult = await isVideo(path);
 
   if (!isVideoResult) {
-    throw new Error("Not Video");
+    raiseError("notvideo");
   }
 
   const isFbroneExist = await isComandExist("ffprobe", ["-version"]);
   if (!isFbroneExist) {
-    throw new Error("Not Video");
+    raiseError("ffprone");
   }
 
   const { stdout } = await runTerminal("ffprobe", [
@@ -50,12 +50,12 @@ export const formatDataCommand = async (
   const isVideoResult = await isVideo(path);
 
   if (!isVideoResult) {
-    throw new Error("Not Video");
+    raiseError("notvideo");
   }
 
   const isFbroneExist = await isComandExist("ffprobe", ["-version"]);
   if (!isFbroneExist) {
-    throw new Error("Not Video");
+    raiseError("ffprone");
   }
 
   const { stdout } = await runTerminal("ffprobe", [
@@ -80,12 +80,12 @@ export const streamDataCommand = async (
   const isVideoResult = await isVideo(path);
 
   if (!isVideoResult) {
-    throw new Error("Not Video");
+    raiseError("notvideo");
   }
 
   const isFbroneExist = await isComandExist("ffprobe", ["-version"]);
   if (!isFbroneExist) {
-    throw new Error("Not Video");
+    raiseError("ffprone");
   }
 
   const { stdout } = await runTerminal("ffprobe", [
@@ -117,14 +117,14 @@ export const converssionCommand = async (
   const isVideoResult = await isVideo(input);
 
   if (!isVideoResult) {
-    throw new Error("Not Video");
+    raiseError("notvideo");
   }
 
   const args: Array<string> = videoConvertArgs(input, output, mime);
 
   const isFfmpegeExist = await isComandExist("ffmpeg", ["-version"]);
   if (!isFfmpegeExist) {
-    throw new Error("Not Video");
+    raiseError("ffmpeg");
   }
 
   await fs.mkdir(output, {
@@ -155,14 +155,14 @@ export const toAudioCommand = async (
   const isVideoResult = await isVideo(input);
 
   if (!isVideoResult) {
-    throw new Error("Not Video");
+    raiseError("notvideo");
   }
 
   const args: Array<string> = audioConvertArgs(input, output, mime);
 
   const isFfmpegeExist = await isComandExist("ffmpeg", ["-version"]);
   if (!isFfmpegeExist) {
-    throw new Error("Not Video");
+    raiseError("ffmpeg")
   }
 
   await fs.mkdir(output, {
@@ -193,14 +193,14 @@ export const trimCommand = async (
   const isVideoResult = await isVideo(input);
 
   if (!isVideoResult) {
-    throw new Error("Not Video");
+    raiseError("notvideo")
   }
 
   const args: Array<string> = await trimVideoArgs(input, output, start, end);
 
   const isFfmpegeExist = await isComandExist("ffmpeg", ["-version"]);
   if (!isFfmpegeExist) {
-    throw new Error("Not Video");
+    raiseError("ffmpeg")
   }
 
   await fs.mkdir(output, {
@@ -230,15 +230,20 @@ export const splitCommand = async (
   const isVideoResult = await isVideo(input);
 
   if (!isVideoResult) {
-    throw new Error("Not Video");
+    raiseError("notvideo")
   }
 
   const argsStart: Array<string> = await trimVideoArgs(input, output, 0, start);
-  const argsEnd: Array<string> = await trimVideoArgs(input, output, start, duration);
+  const argsEnd: Array<string> = await trimVideoArgs(
+    input,
+    output,
+    start,
+    duration,
+  );
 
   const isFfmpegeExist = await isComandExist("ffmpeg", ["-version"]);
   if (!isFfmpegeExist) {
-    throw new Error("Not Video");
+    raiseError("ffmpeg")
   }
 
   await fs.mkdir(output, {

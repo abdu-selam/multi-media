@@ -2,8 +2,11 @@ import {
   FFmpegError,
   FFmpegNotFound,
   FFprobeNotFound,
+  InvalidMime,
   InvalidPath,
   InvalidSecond,
+  InvalidSecondLimit,
+  InvalidSecondLimitStart,
   InvalidVideoError,
 } from "../errors/video.error.js";
 import type { ErrorTypes } from "../types/video.types.js";
@@ -49,12 +52,13 @@ export const raiseError = (
     ffmpeg: FFmpegNotFound,
     path: InvalidPath,
     second: InvalidSecond,
-    limit: InvalidSecond,
-    general: FFmpegError,
+    limit: InvalidSecondLimit,
+    limitSecond: InvalidSecondLimitStart,
+    mime: InvalidMime,
   };
 
   if (Object.keys(errorTypes).includes(type)) {
-    if (type === "general") {
+    if (type === "mime") {
       throw new errorTypes[type](message);
     }
 

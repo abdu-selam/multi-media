@@ -29,6 +29,7 @@ import {
 import nodePath from "node:path";
 import { isVideo } from "../comands/checking.js";
 import { isNumber } from "../utils/validators.js";
+import { raiseError } from "../utils/helper.js";
 
 export class Video implements VideoInterface {
   #folder: string = "";
@@ -110,13 +111,13 @@ export class Video implements VideoInterface {
 
   async move(to: string): Promise<void> {
     if (typeof to !== "string") {
-      throw new Error("string");
+      raiseError("path");
     }
 
     const check = await isVideo(this.input);
 
     if (!check) {
-      throw new Error("error");
+      raiseError("notvideo");
     }
 
     await fs.mkdir(to, {
@@ -133,13 +134,13 @@ export class Video implements VideoInterface {
 
   async copy(to: string): Promise<void> {
     if (typeof to !== "string") {
-      throw new Error("string");
+      raiseError("path");
     }
 
     const check = await isVideo(this.input);
 
     if (!check) {
-      throw new Error("error");
+      raiseError("notvideo");
     }
 
     await fs.mkdir(to, {
@@ -155,7 +156,7 @@ export class Video implements VideoInterface {
     const check = await isVideo(this.input);
 
     if (!check) {
-      throw new Error("error");
+      raiseError("notvideo");
     }
 
     await fs.unlink(this.input);
@@ -180,7 +181,7 @@ export class Video implements VideoInterface {
 
   static async move(video: string, to: string): Promise<void> {
     if (typeof to !== "string") {
-      throw new Error("string");
+      raiseError("path");
     }
 
     const fileMeta = await fileMetaDataPreparer(video);
@@ -195,7 +196,7 @@ export class Video implements VideoInterface {
 
   static async copy(video: string, to: string): Promise<void> {
     if (typeof to !== "string") {
-      throw new Error("string");
+      raiseError("path");
     }
 
     const fileMeta = await fileMetaDataPreparer(video);
@@ -213,7 +214,7 @@ export class Video implements VideoInterface {
     const check = await isVideo(path);
 
     if (!check) {
-      throw new Error("error");
+      raiseError("notvideo");
     }
 
     await fs.unlink(path);
@@ -228,7 +229,7 @@ export class Video implements VideoInterface {
   ): Promise<void> {
     // check to
     if (typeof destination !== "string") {
-      throw new Error("Error");
+      raiseError("path");
     }
 
     const videoData = await this.videoMeta();
@@ -254,7 +255,7 @@ export class Video implements VideoInterface {
     onProgres: onProgres = () => {},
   ): Promise<void> {
     if (typeof destination !== "string") {
-      throw new Error("Error");
+      raiseError("path");
     }
 
     const videoData = await this.videoMeta();
@@ -282,14 +283,14 @@ export class Video implements VideoInterface {
   ): Promise<void> {
     // check the start and destination
     if (!isNumber(startSecond) || !isNumber(endSecond)) {
-      throw new Error("not number");
+      raiseError("second");
     }
 
     const start = Number(startSecond);
     const end = Number(endSecond);
 
     if (end - start <= 0) {
-      throw new Error("Limit");
+      raiseError("limit");
     }
 
     const videoData = await this.videoMeta();
@@ -314,7 +315,7 @@ export class Video implements VideoInterface {
     onProgres: onProgres = () => {},
   ): Promise<void> {
     if (!isNumber(second)) {
-      throw new Error("not number");
+      raiseError("second");
     }
 
     const start = Number(second);
@@ -325,7 +326,7 @@ export class Video implements VideoInterface {
     const end = videoData.duration;
 
     if (end - start <= 0) {
-      throw new Error("Limit");
+      raiseError("limit");
     }
 
     await trimCommand(
@@ -347,7 +348,7 @@ export class Video implements VideoInterface {
     onProgres: onProgres = () => {},
   ): Promise<void> {
     if (!isNumber(second)) {
-      throw new Error("not number");
+      raiseError("second");
     }
 
     const start = 0;
@@ -359,7 +360,7 @@ export class Video implements VideoInterface {
     end = videoData.duration > end ? end : videoData.duration;
 
     if (end === 0) {
-      throw new Error("Limit");
+      raiseError("limit");
     }
 
     await trimCommand(
@@ -381,20 +382,20 @@ export class Video implements VideoInterface {
     onProgres: onProgres = () => {},
   ): Promise<void> {
     if (!isNumber(second)) {
-      throw new Error("not number");
+      raiseError("second");
     }
 
     const start = Number(second);
 
     if (start <= 0) {
-      throw new Error("not number");
+      raiseError("limitSecond");
     }
 
     const videoData = await this.videoMeta();
     const fileData = await this.fileMeta();
 
     if (videoData.duration <= start) {
-      throw new Error("not number");
+      raiseError("limitSecond");
     }
 
     await splitCommand(
